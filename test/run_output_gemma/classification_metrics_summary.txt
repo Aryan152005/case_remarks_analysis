@@ -1,0 +1,32 @@
+Ollama LLM Report Classification Summary for Model: gemma:7b
+Date of Report: 2025-06-04 06:07:01
+--------------------------------------------------
+Total Reports Attempted: 10.00
+Reports Successfully Classified: 10.00
+Reports Skipped (Empty/Invalid): 0.00
+Reports with Errors: 0.00
+--- Processing Time (seconds) ---
+Min Processing Time: 13.36
+Max Processing Time: 25.49
+Average Processing Time: 15.41
+Median Processing Time: 14.26
+Std Dev Processing Time: 3.62
+--- Tokens per Second ---
+Min Tokens per Second: 87.28
+Max Tokens per Second: 169.07
+Average Tokens per Second: 152.20
+Median Tokens per Second: 159.74
+Std Dev Tokens per Second: 24.03
+--- Input Tokens ---
+Min Input Tokens2041
+Max Input Tokens2200
+Average Input Tokens: 2109.00
+Median Input Tokens: 2103.50
+Std Dev Input Tokens: 47.91
+--- Output Tokens ---
+Min Output Tokens148
+Max Output Tokens179
+Average Output Tokens: 159.20
+Median Output Tokens: 157.00
+Std Dev Output Tokens: 8.92
+--------------------------------------------------

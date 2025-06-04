@@ -1,0 +1,32 @@
+Ollama LLM Report Classification Summary for Model: mistral:7b-instruct
+Date of Report: 2025-06-04 06:03:46
+--------------------------------------------------
+Total Reports Attempted: 10.00
+Reports Successfully Classified: 10.00
+Reports Skipped (Empty/Invalid): 0.00
+Reports with Errors: 0.00
+--- Processing Time (seconds) ---
+Min Processing Time: 4.56
+Max Processing Time: 15.40
+Average Processing Time: 6.72
+Median Processing Time: 5.80
+Std Dev Processing Time: 3.23
+--- Tokens per Second ---
+Min Tokens per Second: 148.63
+Max Tokens per Second: 519.47
+Average Tokens per Second: 390.58
+Median Tokens per Second: 394.51
+Std Dev Tokens per Second: 105.39
+--- Input Tokens ---
+Min Input Tokens2041
+Max Input Tokens2200
+Average Input Tokens: 2109.00
+Median Input Tokens: 2103.50
+Std Dev Input Tokens: 47.91
+--- Output Tokens ---
+Min Output Tokens172
+Max Output Tokens354
+Average Output Tokens: 226.10
+Median Output Tokens: 212.50
+Std Dev Output Tokens: 52.54
+--------------------------------------------------
