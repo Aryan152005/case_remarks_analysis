@@ -1,0 +1,10 @@
+Overall Model Performance Comparison Summary
+Date of Report: 2025-06-10 05:07:01
+--------------------------------------------------
+        Model  Overall Accuracy (%)  Overall Completeness (%)  Successful Reports  Average Processing Time (s)  Average Tokens/Second
+  llama3.1:8b             27.184466                 27.184466                  10                     7.329019             428.161592
+   mistral:7b             25.242718                 25.242718                  10                     6.881205             593.790691
+     gemma:7b             21.359223                 21.359223                  10                    17.296274             172.865213
+granite3.2:8b             20.388350                 20.388350                  10                     8.010085             464.792561
+    llama3:8b             18.446602                 18.446602                  10                     5.758515             586.567908
+phi3.5:latest              3.883495                  3.883495                  10                    45.846007             291.546986

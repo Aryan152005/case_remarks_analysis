@@ -1,32 +1,32 @@
 Ollama LLM Report Classification Summary for Model: llama3.1:8b
-Date of Report: 2025-06-04 10:41:00
+Date of Report: 2025-06-05 10:42:23
 --------------------------------------------------
-Total Reports Attempted: 10.00
-Reports Successfully Classified: 10.00
+Total Reports Attempted: 71.00
+Reports Successfully Classified: 71.00
 Reports Skipped (Empty/Invalid): 0.00
 Reports with Errors: 0.00
 --- Processing Time (seconds) ---
-Min Processing Time: 4.78
-Max Processing Time: 8.18
-Average Processing Time: 6.35
-Median Processing Time: 6.00
-Std Dev Processing Time: 1.18
+Min Processing Time: 5.26
+Max Processing Time: 15.09
+Average Processing Time: 7.05
+Median Processing Time: 6.36
+Std Dev Processing Time: 1.83
 --- Tokens per Second ---
-Min Tokens per Second: 240.36
-Max Tokens per Second: 369.83
-Average Tokens per Second: 299.78
-Median Tokens per Second: 301.91
-Std Dev Tokens per Second: 43.94
+Min Tokens per Second: 157.08
+Max Tokens per Second: 368.75
+Average Tokens per Second: 280.79
+Median Tokens per Second: 292.81
+Std Dev Tokens per Second: 45.81
 --- Input Tokens ---
-Min Input Tokens1542
-Max Input Tokens1695
-Average Input Tokens: 1600.60
-Median Input Tokens: 1582.50
-Std Dev Input Tokens: 50.63
+Min Input Tokens1462
+Max Input Tokens2038
+Average Input Tokens: 1615.28
+Median Input Tokens: 1588.00
+Std Dev Input Tokens: 112.04
 --- Output Tokens ---
-Min Output Tokens195
-Max Output Tokens335
-Average Output Tokens: 258.90
-Median Output Tokens: 244.00
-Std Dev Output Tokens: 48.91
+Min Output Tokens211
+Max Output Tokens616
+Average Output Tokens: 287.66
+Median Output Tokens: 260.00
+Std Dev Output Tokens: 75.32
 --------------------------------------------------

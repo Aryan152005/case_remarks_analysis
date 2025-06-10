@@ -1,0 +1,186 @@
+LLM Report Classification Summary for Model: llama3:8b
+Date of Report: 2025-06-10 04:52:33
+--------------------------------------------------
+Total Reports Attempted: 10.00
+Reports Successfully Classified: 10.00
+Reports Skipped (Empty/Invalid): 0.00
+Reports with Errors: 0.00
+Reports Used for Accuracy Calculation: 10.00
+Overall Accuracy (%): 18.45
+Overall Completeness (%): 18.45
+--- Processing Time (seconds) ---
+Min Processing Time: 4.30
+Max Processing Time: 16.04
+Average Processing Time: 5.76
+Median Processing Time: 4.65
+Std Dev Processing Time: 3.62
+--- Tokens per Second ---
+Min Tokens per Second: 178.91
+Max Tokens per Second: 665.97
+Average Tokens per Second: 586.57
+Median Tokens per Second: 628.94
+Std Dev Tokens per Second: 145.89
+--- Input Tokens ---
+Min Input Tokens2661
+Max Input Tokens2814
+Average Input Tokens: 2719.60
+Median Input Tokens: 2701.50
+Std Dev Input Tokens: 50.63
+--- Output Tokens ---
+Min Output Tokens176
+Max Output Tokens202
+Average Output Tokens: 187.00
+Median Output Tokens: 184.00
+Std Dev Output Tokens: 9.44
+--------------------------------------------------
+
+--- Field-wise Accuracy (% Correct) ---
+event_type: 50.00%
+event_sub_type: 10.00%
+state_of_victim: 50.00%
+victim_gender: 0.00%
+specified_matter: 0.00%
+date_reference: 0.00%
+frequency: 0.00%
+repeat_incident: 0.00%
+identification: 66.67%
+injury_type: 0.00%
+victim_relation: 40.00%
+incident_location: 20.00%
+area: 0.00%
+suspect_description: 0.00%
+object_involved: 14.29%
+used_weapons: 0.00%
+offender_relation: 0.00%
+mode_of_threat: 0.00%
+need_ambulance: 50.00%
+children_involved: 0.00%
+
+--- Per-Class Precision, Recall, F1-Score (for selected categorical fields) ---
+
+Field: event_type
+  OTHERS               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  PUBLIC NUISANCE      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  SOCIAL ISSUES        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  THEFT & BURGLARY     | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  TRAFFIC INCIDENTS    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  VIOLENT CRIME        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  fire & hazards       | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  medical emergencies  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  missing persons      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  natural incidents    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  not specified        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  others               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  public disturbance   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  public nuisance      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  rescue operations    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  social issues        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  theft & burglary     | Precision: 1.00 | Recall: 0.50 | F1-Score: 0.67
+  traffic incidents    | Precision: 0.50 | Recall: 1.00 | F1-Score: 0.67
+  violent crime        | Precision: 0.50 | Recall: 1.00 | F1-Score: 0.67
+
+Field: state_of_victim
+  Distressed           | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  Injured              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  distressed           | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  injured              | Precision: 0.50 | Recall: 1.00 | F1-Score: 0.67
+  not specified        | Precision: 1.00 | Recall: 0.75 | F1-Score: 0.86
+
+Field: victim_gender
+  female               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  not specified        | Precision: 0.89 | Recall: 0.89 | F1-Score: 0.89
+
+Field: event_sub_type
+  ACCIDENT             | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  ASSAULT              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  DOMESTIC VIOLENCE    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  LABOUR/WAGES ISSUES  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  OTHERS               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  OTHERS[VEHICLE FRAUD] | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  ROBBERY              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  THEFT                | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  THREAT               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  TRESSPASSING TO PROPERTY | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  VANDALISM            | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  VEHICLE BREAK DOWN   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  VEHICLE THEFT        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  VERBAL ABUSE         | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  abandoned vehicles   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  accident             | Precision: 1.00 | Recall: 1.00 | F1-Score: 1.00
+  air pollution        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  ambulance service    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  assault              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  assistance for hospitalization of challenged persons | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  attempt of theft     | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  bleeding             | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  bomb blast           | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  breathing difficulties | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  building fire        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  child abuse          | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  child lines          | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  crime against women  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  cyber crime          | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  dead body found      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  disaster             | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  disputes between neighbours | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  domestic violence    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  drunken atrocities   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  earthquake           | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  electrical fire      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  family issues        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  fire                 | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  fire injury          | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  flood                | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  gambling             | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  gas leakage          | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  general nuisance     | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  hazardous condition incidents | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  heart attack         | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  hit & run incidents  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  house breaking attempts | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  illegal constructions | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  illegal mining       | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  inter hospital transfer | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  issues related to senior citizens | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  kidnapping           | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  labour/wages issues  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  land boundary issues | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  landscape fire       | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  landslide            | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  migrant labourers issues | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  missing              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  murder               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  nizhal panic call    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  noise pollution      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  not specified        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  nudity in public     | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  obstructive parking  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  others               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  others[vehicle fraud] | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  person collapsed     | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  railway              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  rainy season incidents | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  rash driving         | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  road crash rescue    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  robbery              | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  run over incidents   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  sale of contrabands  | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  scuffle among students | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  search and rescue    | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  strike               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  structure collapse   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  suicide attempt      | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  suspiciously found persons or vehicles | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  theft                | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  threat               | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  traffic block        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  trespassing to property | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  tresspassing to property | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  vandalism            | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  vehicle break down   | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  vehicle fire         | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  vehicle theft        | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  verbal abuse         | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  wastage dumping issue | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  water rescue         | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00
+  well rescue          | Precision: 0.00 | Recall: 0.00 | F1-Score: 0.00

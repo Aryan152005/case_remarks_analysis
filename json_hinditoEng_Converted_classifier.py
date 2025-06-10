@@ -9,19 +9,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+# Assuming schema.py is in the same directory or accessible via PYTHONPATH
+from schema import FIELD_VALUE_SCHEMA, ALL_EVENT_SUB_TYPES, ALL_EVENT_TYPES_AND_SUBTYPES_FLATTENED # New import for better sub-type mapping
 
-from schema import FIELD_VALUE_SCHEMA, ALL_EVENT_SUB_TYPES
-
-
-GROUND_TRUTH_FOLDER = 'data/ground_truth_eng/'
-OUTPUT_CSV_FILE = 'output/classified_reports.csv'
-OUTPUT_JSON_FILE = 'output/classified_reports.json'
+GROUND_TRUTH_FOLDER = 'data/ground_truth_eng/' # This path is for loading reports to classify, not ground truth for comparison
+OUTPUT_CSV_FILE = 'checkoutput/classified_reports.csv'
+OUTPUT_JSON_FILE = 'checkoutput/classified_reports.json'
 REPORT_COLUMN_NAME = 'event_info_text'
 EVENT_ID_COLUMN_NAME = 'file_name'
 
 # Model Selection
-OLLAMA_MODEL = 'llama3.1:8b'
-HUGGINGFACE_MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+OLLAMA_MODEL = 'llama3.1:8b' # Ollama model name, can be changed to any other available model
+HUGGINGFACE_MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct" # Used for tokenizer
 
 # Output directory for metrics and plots
 RUN_OUTPUT_DIR = 'run_output'
@@ -51,7 +50,7 @@ def get_token_count(text: str) -> int:
     if tokenizer:
         return len(tokenizer.encode(text))
     else:
-
+        # Rough estimation: 1 token ~ 4 characters for English
         return len(text) // 4
 
 FIELDS = list(FIELD_VALUE_SCHEMA.keys())
@@ -69,51 +68,107 @@ for field, definition in FIELD_VALUE_SCHEMA.items():
             3. NEVER use 'NULL' - default to 'OTHERS' if uncertain
             4. Choose the MOST SPECIFIC applicable type\n"""
     elif field == "event_sub_type":
-        schema_instructions += f"""- For `{field}`, provide a specific sub-type relevant to the incident:
+        # UPDATED: Use the ALL_EVENT_SUB_TYPES directly as options for the LLM
+        # The validation function will handle the mapping to parent types.
+        schema_instructions += f"""- For `{field}`, provide a specific sub-type relevant to the incident.
             **Rules:**
-            1. MUST match the selected event_type's sub-types from these options:
+            1. MUST choose from the list of ALL possible sub-types:
                 {', '.join(ALL_EVENT_SUB_TYPES)}
-            2. If event_type is 'OTHERS', sub-type MUST be 'OTHERS'
-            3. If no matching sub-type, use the most generic option for that type
-            4. NEVER use 'NULL'\n"""
+            2. If 'event_type' is 'OTHERS', then 'event_sub_type' MUST also be 'OTHERS'.
+            3. If no suitable sub-type is found, use 'OTHERS'.
+            4. NEVER use 'NULL'.\n"""
     elif isinstance(definition, list):
         schema_instructions += f"- For `{field}`, select one value from: {', '.join(definition)}. If not specified, use \"not specified\".\n"
     elif definition == "text_allow_not_specified":
         schema_instructions += f"- For `{field}`, extract the relevant text directly from the report. If none, use \"not specified\".\n"
 
+# --- NEW: Helper function to find parent event type for a sub-type ---
+def get_parent_event_type(sub_type: str) -> str:
+    """
+    Given an event_sub_type, returns its corresponding event_type.
+    Uses the ALL_EVENT_TYPES_AND_SUBTYPES_FLATTENED mapping from schema.py.
+    Returns 'OTHERS' if no direct parent is found.
+    """
+    return ALL_EVENT_TYPES_AND_SUBTYPES_FLATTENED.get(sub_type.lower(), 'others').upper()
+
+
 def validate_classification(extracted_data: dict, original_text: str) -> dict:
     """
     Post-processes the LLM output to enforce schema rules and fix common errors.
+    Modified to prioritize event_sub_type for event_type correction.
     """
-    # Ensure event_type is valid
+    # Clean text fields (existing logic, no change needed)
+    for field in FIELDS:
+        # Ensure values are stripped and lowercased for comparison, but keep original case for final output
+        # Handle 'NULL' specifically, map it to 'not specified' or 'OTHERS'
+        current_value = str(extracted_data.get(field, '')).strip()
+        if current_value.lower() == 'null':
+            if field in ['event_type', 'event_sub_type']:
+                extracted_data[field] = 'OTHERS'
+            else:
+                extracted_data[field] = 'not specified'
+        else:
+            extracted_data[field] = current_value # Keep the casing from LLM for non-special values
+
+    # Convert event_type and event_sub_type to consistent casing for internal validation
+    extracted_data['event_type'] = extracted_data.get('event_type', 'OTHERS').upper()
+    extracted_data['event_sub_type'] = extracted_data.get('event_sub_type', 'OTHERS').upper()
+
+    # 1. Ensure event_type is valid based on predefined schema
     if extracted_data['event_type'] not in FIELD_VALUE_SCHEMA['event_type']:
-        print(f"Invalid event_type '{extracted_data['event_type']}'. Forcing to 'OTHERS'")
+        print(f"Invalid event_type '{extracted_data['event_type']}' from LLM. Forcing to 'OTHERS'.")
         extracted_data['event_type'] = 'OTHERS'
         extracted_data['event_sub_type'] = 'OTHERS'
-        extracted_data['specified_matter'] = f"Original classification: {extracted_data['event_type']} - {original_text[:100]}..."
+        extracted_data['specified_matter'] = f"Original event_type classification was invalid: {extracted_data['event_type']} - {original_text[:100]}..."
+
+    # 2. Validate and potentially correct event_sub_type and event_type based on the schema
+    current_event_type = extracted_data['event_type']
+    current_event_sub_type = extracted_data['event_sub_type']
     
-    # Validate event_sub_type
-    if extracted_data['event_type'] == 'OTHERS':
+    # If the LLM put 'OTHERS' for event_type, force sub-type to 'OTHERS' as per rule
+    if current_event_type == 'OTHERS':
+        if current_event_sub_type != 'OTHERS':
+            print(f"Event type is 'OTHERS' but sub-type is '{current_event_sub_type}'. Forcing sub-type to 'OTHERS'.")
         extracted_data['event_sub_type'] = 'OTHERS'
-    else:
-        allowed_subtypes = FIELD_VALUE_SCHEMA['event_sub_type'].get(extracted_data['event_type'], [])
+        return extracted_data # No further validation needed for OTHERS/OTHERS
+
+    # Check if the extracted sub-type is globally valid
+    if current_event_sub_type not in ALL_EVENT_SUB_TYPES:
+        print(f"Invalid event_sub_type '{current_event_sub_type}' from LLM. Attempting correction.")
+        # If sub-type is invalid, default to 'OTHERS' and log
+        extracted_data['event_sub_type'] = 'OTHERS'
+        if extracted_data['event_type'] != 'OTHERS': # If event_type is not OTHERS, it's still valid
+            print(f"Sub-type '{current_event_sub_type}' is unknown. Keeping event_type '{extracted_data['event_type']}' and setting sub-type to 'OTHERS'.")
+            # If the original event_type was valid, it's fine.
+        else: # Event_type was already OTHERS, so this is consistent
+             pass
+
+    # If the sub-type is now 'OTHERS' (either set by LLM or corrected above), it's fine for any event_type
+    if extracted_data['event_sub_type'] == 'OTHERS':
+        return extracted_data
+
+    # Now, check if the current event_sub_type is valid for the current event_type
+    allowed_subtypes_for_current_type = FIELD_VALUE_SCHEMA['event_sub_type'].get(current_event_type, [])
+    
+    if current_event_sub_type not in allowed_subtypes_for_current_type:
+        print(f"Mismatch: Sub-type '{current_event_sub_type}' is not valid for Event Type '{current_event_type}'. Attempting to re-classify event_type based on sub-type.")
         
-        if extracted_data['event_sub_type'] not in allowed_subtypes:
-            original_sub_type = extracted_data['event_sub_type'] 
-            
-            if allowed_subtypes:
-                extracted_data['event_sub_type'] = allowed_subtypes[0]
-                print(f"Invalid sub-type '{original_sub_type}' for event_type '{extracted_data['event_type']}'. Resetting to first valid: '{extracted_data['event_sub_type']}'.")
-            else:
-                extracted_data['event_sub_type'] = 'OTHERS'
-                print(f"Invalid sub-type '{original_sub_type}' for event_type '{extracted_data['event_type']}'. No valid sub-types defined. Resetting to 'OTHERS'.")
-
-
-    # Clean text fields
-    for field in FIELDS:
-        if field not in ['event_type', 'event_sub_type']:
-            if extracted_data.get(field, 'not specified') == 'NULL':
-                extracted_data[field] = 'not specified'
+        # Try to find a new event_type that matches the sub_type
+        new_event_type_from_subtype = get_parent_event_type(current_event_sub_type)
+        
+        if new_event_type_from_subtype.upper() in FIELD_VALUE_SCHEMA['event_type'] and new_event_type_from_subtype.upper() != 'OTHERS':
+            print(f"Found a matching event_type '{new_event_type_from_subtype.upper()}' for sub-type '{current_event_sub_type}'. Changing event_type.")
+            extracted_data['event_type'] = new_event_type_from_subtype.upper()
+        else:
+            # If no suitable parent event_type is found for the sub-type, or it's 'OTHERS',
+            # then set both to 'OTHERS' to ensure consistency.
+            print(f"Could not find a valid parent event_type for sub-type '{current_event_sub_type}'. Setting both to 'OTHERS'.")
+            extracted_data['event_type'] = 'OTHERS'
+            extracted_data['event_sub_type'] = 'OTHERS'
+            extracted_data['specified_matter'] = (
+                f"Original classification had a sub-type '{current_event_sub_type}' not matching event type '{current_event_type}', and no clear re-classification possible. "
+                f"Original Text: {original_text[:100]}..."
+            )
     
     return extracted_data
 
@@ -136,15 +191,17 @@ def extract_report_data(report_text: str) -> dict:
             '__error_message': 'Empty or NaN report text'
         }
 
+    # Updated Prompt: Removed the specific event_sub_type list from prompt as LLM will get ALL_EVENT_SUB_TYPES
+    # and validation will handle the type-subtype consistency.
     prompt_content = f"""EMERGENCY CALL CLASSIFICATION TASK:
 You are analyzing 112 emergency call transcripts. Extract structured information with these STRICT RULES:
 
 1. For event_type: MUST choose from these EXACT options: {', '.join(FIELD_VALUE_SCHEMA['event_type'])}
-2. For event_sub_type: MUST match the chosen event_type's sub-types
-3. If event_type is 'OTHERS', event_sub_type MUST be 'OTHERS'
-4. NEVER use 'NULL' for any field
-5. Extract ONLY information explicitly stated in the CALLER'S statements
-6. For text fields: Extract verbatim when possible, otherwise 'not specified'
+2. For event_sub_type: MUST choose from ALL possible sub-types: {', '.join(ALL_EVENT_SUB_TYPES)}.
+3. If event_type is 'OTHERS', event_sub_type MUST be 'OTHERS'.
+4. NEVER use 'NULL' for any field, use 'not specified' or 'OTHERS' as appropriate.
+5. Extract ONLY information explicitly stated in the CALLER'S statements.
+6. For text fields: Extract verbatim when possible, otherwise 'not specified'.
 
 SCHEMA RULES:
 {schema_instructions}
@@ -165,8 +222,8 @@ field_name: value"""
             messages=[{
                 "role": "user",
                 "content": prompt_content
-        }],
-        options={'temperature': 0.5}
+            }],
+            options={'temperature': 0.2}
         )
         
         llm_output = response['message']['content']
@@ -188,20 +245,12 @@ field_name: value"""
                     print(f"Warning: Could not parse line '{line}' from LLM output.")
                     continue
         
-
         final_data = {}
         for field in FIELDS:
-            if field == 'event_type':
-                final_data[field] = extracted_data.get(field, 'OTHERS')
-            elif field == 'event_sub_type':
-                # Default to OTHERS or the first sub-type of the inferred event_type
-                inferred_event_type = extracted_data.get('event_type', 'OTHERS')
-                allowed_subtypes = FIELD_VALUE_SCHEMA['event_sub_type'].get(inferred_event_type, [])
-                final_data[field] = extracted_data.get(field, allowed_subtypes[0] if allowed_subtypes else 'OTHERS')
-            else:
-                final_data[field] = extracted_data.get(field, 'not specified')
-
-        # Post-process validation
+            # Ensure all fields are present, even if LLM missed them
+            final_data[field] = extracted_data.get(field, 'not specified')
+        
+        # Post-process validation - This is crucial for enforcing schema rules
         final_data = validate_classification(final_data, report_text)
         
         # Add metrics
@@ -220,7 +269,7 @@ field_name: value"""
         end_time = time.perf_counter()
         processing_time = end_time - start_time
         input_tokens_on_error = get_token_count(prompt_content)
-        output_tokens_on_error = get_token_count(llm_output)
+        output_tokens_on_error = get_token_count(llm_output) # Attempt to get tokens from partial output
         tokens_per_second_on_error = (input_tokens_on_error + output_tokens_on_error) / processing_time if processing_time > 0 else 0
 
         error_message = str(e).replace('\n', ' ')[:200]
@@ -429,7 +478,7 @@ def generate_metrics_report(metrics_df: pd.DataFrame, output_dir: str):
 
 
 # Defined a function to run the classification
-def run_classification_pipeline(input_folder: str):
+def run_classification_pipeline(input_folder: str, batch_save_interval: int = 2):
     print(f"--- Emergency Call Classification System ---")
     print(f"Model: {OLLAMA_MODEL}")
     print(f"Input Folder: {input_folder}") # Use the provided input_folder
@@ -439,7 +488,7 @@ def run_classification_pipeline(input_folder: str):
 
     # Ensure directories exist
     os.makedirs(os.path.dirname(OUTPUT_CSV_FILE), exist_ok=True)
-  
+    
     # Load and process reports from the specified input_folder
     reports_to_process = load_reports_from_folder(input_folder) 
     if not reports_to_process:
@@ -448,8 +497,7 @@ def run_classification_pipeline(input_folder: str):
 
     df_to_process = pd.DataFrame(reports_to_process)
     all_extracted_records = []
-    all_metrics_for_report = []
-
+    
     output_columns_order = [
         EVENT_ID_COLUMN_NAME,
         REPORT_COLUMN_NAME
@@ -476,31 +524,31 @@ def run_classification_pipeline(input_folder: str):
             **extracted_record
         }
         all_extracted_records.append(final_record)
-        metrics_record = {k: v for k, v in extracted_record.items() if k.startswith('__') or k in ['event_type', 'event_sub_type']}
-        all_metrics_for_report.append(metrics_record)
 
-    # Save results
-    if all_extracted_records:
-        df_final_output = pd.DataFrame(all_extracted_records, columns=output_columns_order)
-        try:
-            df_final_output.to_csv(OUTPUT_CSV_FILE, index=False, encoding='utf-8')
-            with open(OUTPUT_JSON_FILE, 'w', encoding='utf-8') as f:
-                json.dump(df_final_output.to_dict(orient='records'), f, indent=4, ensure_ascii=False)
-            print(f"\nSuccessfully saved {len(all_extracted_records)} classified calls to CSV and JSON.")
-        except Exception as e:
-            print(f"Error saving results: {e}")
-
-    # Generate metrics
-    if all_metrics_for_report:
-        metrics_df_final = pd.DataFrame(all_metrics_for_report)
-        generate_metrics_report(metrics_df_final, RUN_OUTPUT_DIR)
+        # --- Batch Saving Logic ---
+        if (index + 1) % batch_save_interval == 0 or (index + 1) == len(df_to_process):
+            print(f"Saving results after {index + 1} iterations...")
+            df_current_output = pd.DataFrame(all_extracted_records, columns=output_columns_order)
+            try:
+                # Save to CSV
+                df_current_output.to_csv(OUTPUT_CSV_FILE, index=False, encoding='utf-8')
+                # Save to JSON
+                with open(OUTPUT_JSON_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(df_current_output.to_dict(orient='records'), f, indent=4, ensure_ascii=False)
+                print(f"Saved {len(all_extracted_records)} classified calls to CSV and JSON.")
+            except Exception as e:
+                print(f"Error saving results at iteration {index+1}: {e}")
 
     print("\nProcessing complete.")
+
+    # Generate final metrics report using all collected records
+    if all_extracted_records:
+        metrics_df_final = pd.DataFrame(all_extracted_records)
+        generate_metrics_report(metrics_df_final, RUN_OUTPUT_DIR)
 
 
 if __name__ == "__main__":
     # If to run it standalone, you can do:
-    # run_classification_pipeline('data/ground_truth_eng/') # Or w
+    run_classification_pipeline('data/split_conversations_english', batch_save_interval=2) # Added batch_save_interval
     print("This script is intended to be imported and run by main.py for the full pipeline.")
     print("To run standalone, uncomment the line above and specify an input folder.")
- 

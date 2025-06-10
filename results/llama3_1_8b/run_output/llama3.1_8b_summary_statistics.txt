@@ -1,0 +1,32 @@
+Summary Statistics for llama3.1:8b:
+Total Reports Attempted: 10.00
+Reports Successfully Classified: 10.00
+Reports Skipped (Empty/Invalid): 0.00
+Reports with Errors: 0.00
+Reports Used for Accuracy Calculation: 10.00
+Overall Accuracy (%): 31.07
+Overall Completeness (%): 31.07
+--- Processing Time (seconds) ---: 
+Min Processing Time: 5.02
+Max Processing Time: 13.64
+Average Processing Time: 7.30
+Median Processing Time: 6.46
+Std Dev Processing Time: 2.44
+--- Tokens per Second ---: 
+Min Tokens per Second: 213.23
+Max Tokens per Second: 594.04
+Average Tokens per Second: 433.56
+Median Tokens per Second: 451.64
+Std Dev Tokens per Second: 101.98
+--- Input Tokens ---: 
+Min Input Tokens: 2636
+Max Input Tokens: 2789
+Average Input Tokens: 2694.60
+Median Input Tokens: 2676.50
+Std Dev Input Tokens: 50.63
+--- Output Tokens ---: 
+Min Output Tokens: 192
+Max Output Tokens: 326
+Average Output Tokens: 257.50
+Median Output Tokens: 249.00
+Std Dev Output Tokens: 40.73
